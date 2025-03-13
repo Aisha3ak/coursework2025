@@ -26,7 +26,7 @@ if (isset($_COOKIE['username']) && isset($_COOKIE['session_token'])) {
 
     $username = $_COOKIE['username'];
 
-    $result = $query->select('accounts', 'id, role', "WHERE username = '$username'");
+    $result = $query->select('accounts', 'id, role', "WHERE username = ?", [$username]);
 
     if (!empty($result)) {
         $user = $result[0];
@@ -58,7 +58,7 @@ if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $existingUser = $query->executeQuery("SELECT * FROM accounts WHERE username='$username' OR email='$email' OR number='$number'");
+    $existingUser = $query->executeQuery("SELECT * FROM accounts WHERE username=? OR email=? OR number=?", [$username, $email, $number]);
 
     if ($existingUser->num_rows > 0) {
         $msg = [
@@ -67,7 +67,7 @@ if (isset($_POST['submit'])) {
         ];
     } else {
         $result = $query->registerUser($name, $number, $email, $username, $password, $role);
-        $userData = $query->executeQuery("SELECT * FROM accounts WHERE username='$username'")->fetch_assoc();
+        $userData = $query->executeQuery("SELECT * FROM accounts WHERE username=?", [$username])->fetch_assoc();
 
         if (!empty($result) && !empty($userData) && isset($userData['id'])) {
             $_SESSION['loggedin'] = true;
@@ -137,9 +137,9 @@ if (isset($_POST['submit'])) {
     <?php if (!empty($msg)): ?>
         <script>
             Swal.fire({
-                title: "<?php echo $msg['title']; ?>",
-                text: "<?php echo $msg['text']; ?>",
-                icon: "<?php echo $msg['icon'] ?? 'error'; ?>",
+                title: "<?php echo htmlspecialchars($msg['title'], ENT_QUOTES, 'UTF-8'); ?>",
+                text: "<?php echo htmlspecialchars($msg['text'], ENT_QUOTES, 'UTF-8'); ?>",
+                icon: "<?php echo htmlspecialchars($msg['icon'] ?? 'error', ENT_QUOTES, 'UTF-8'); ?>",
                 confirmButtonText: "OK"
             });
         </script>

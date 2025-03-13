@@ -66,13 +66,13 @@ $product = $query->getProduct($product_id);
 
                         <p style="text-align: justify;">
                             <b>Product details:</b>
-                            <span style="white-space: pre-wrap;"><?= $product['description']; ?></span>
+                            <span style="white-space: pre-wrap;"><?= htmlspecialchars($product['description'], ENT_QUOTES, 'UTF-8'); ?></span>
                         </p>
 
                         <a href="/" class="primary-btn">Back to Products</a>
                         <ul>
                             <li><b>Category</b>
-                                <span><? echo $query->select('categories', 'category_name', 'WHERE id=' . $product['category_id'])[0]['category_name'] ?></span>
+                                <span><?= htmlspecialchars($query->select('categories', 'category_name', 'WHERE id = ?', [$product['category_id']])[0]['category_name'], ENT_QUOTES, 'UTF-8') ?></span>
                             </li>
                             <li><b>Rating</b> <span><?php echo $product['rating']; ?></span></li>
                             <li><b>Quantity</b> <span><?php echo $product['quantity']; ?></span></li>

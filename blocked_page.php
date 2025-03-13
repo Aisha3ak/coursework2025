@@ -9,7 +9,8 @@ if (!isset($_SESSION['loggedin']) or $_SESSION['loggedin'] !== true) {
     header("Location: ./login/");
     exit;
 } else {
-    if ($query->select('accounts', 'status', 'WHERE id = "' . $_SESSION['id'] . '"')[0]['status'] !== 'blocked') {
+    $userStatus = $query->select('accounts', 'status', 'WHERE id = ?', [$_SESSION['id']]);
+    if (!isset($userStatus[0]['status']) || $userStatus[0]['status'] !== 'blocked') {
         header("Location: ./login/");
         exit;
     }
@@ -30,7 +31,7 @@ if (!isset($_SESSION['loggedin']) or $_SESSION['loggedin'] !== true) {
 <body>
     <div class="container">
         <h1>Access Denied</h1>
-        <p>Sorry, <span><?= $_SESSION['username'] ?></span>, your access to this page has been blocked.</p>
+        <p>Sorry, <span><?= htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') ?></span>, your access to this page has been blocked.</p>
         <p>If you believe this is an error, please contact the site administrator.</p>
         <a href="https://t.me/+998997799333" class="contact-link">Contact Administrator</a>
         <a class="logout" href="./logout/">Logout</a>

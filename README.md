@@ -13,6 +13,7 @@ This is an **online marketplace platform** built using **PHP and MySQL**, where 
 ✅ **🔎 Search & Filters** – Users can search for products and filter them based on various criteria  
 ✅ **🛒 Shopping Cart** – Users can add products to their cart and proceed to checkout  
 ✅ **📦 Order Management** – Admins can manage orders and update order statuses  
+✅ **🔒 Enhanced Security** – Protection against SQL injection and XSS attacks
 
 ---
 
@@ -51,6 +52,27 @@ This is an **online marketplace platform** built using **PHP and MySQL**, where 
 
 ---
 
+## 🔒 **Security Improvements**
+
+This marketplace application has been enhanced with several security improvements:
+
+### 1. SQL Injection Protection
+- Implemented prepared statements for all database queries
+- Parameterized queries in authentication and data retrieval functions
+- Removed direct string concatenation in SQL queries
+
+### 2. Cross-Site Scripting (XSS) Prevention
+- Added proper output encoding for all user-generated content
+- Implemented `htmlspecialchars()` with ENT_QUOTES flag for comprehensive protection
+- Secured error messages and notifications
+
+### 3. Input Validation
+- Comprehensive server-side validation for all user inputs
+- Client-side validation to enhance user experience
+- Type checking and sanitization of data
+
+---
+
 ## ⚡ **Installation Guide**  
 
 To set up the **PHP-MySQL Marketplace**, follow these steps:  
@@ -72,7 +94,7 @@ cd php-mysql-marketplace
   ```
 - **Import the database schema**:  
   ```bash
-  mysql -u yourusername -p marketplace < db/database.sql
+  mysql -u yourusername -p marketplace < database.sql
   ```
 
 ### 4️⃣ **Configure Database Connection**  
@@ -96,12 +118,30 @@ cd php-mysql-marketplace
   ```
 - **Ensure you have a `Database` class** in the `config.php` file  
 
-### 5️⃣ **Run the Application**  
-- Deploy on a **PHP-compatible server** (Apache, Nginx, or XAMPP)  
+### 5️⃣ **Set Up Web Server Environment**
+- **XAMPP/WAMP/MAMP**: 
+  - Install one of these local server packages
+  - Move the project folder to the `htdocs` (XAMPP/MAMP) or `www` (WAMP) directory
+
+- **Apache Configuration**:
+  - Ensure PHP module is enabled
+  - Set proper permissions for file uploads:
+    ```bash
+    chmod 755 -R /path/to/src/images/products
+    ```
+
+### 6️⃣ **Run the Application**  
+- Start your local web server (Apache)
 - Open your browser and access:  
   ```
   http://localhost/php-mysql-marketplace
   ```
+
+### 7️⃣ **Security Best Practices**
+- Regularly update your PHP installation
+- Keep MySQL/MariaDB updated to the latest version
+- Consider using HTTPS even in local development
+- Review server logs regularly for suspicious activity
 
 ---
 

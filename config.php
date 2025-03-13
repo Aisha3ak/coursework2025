@@ -6,7 +6,7 @@ class Database
 
     public function __construct()
     {
-        $servername = "127.0.0.1:3308";
+        $servername = "localhost";
         $username = "root";
         $password = "";
         $dbname = "marketplace";
@@ -43,10 +43,26 @@ class Database
         return $result;
     }
 
-    public function select($table, $columns = "*", $condition = "")
+    public function select($table, $columns = "*", $condition = "", $params = [])
     {
-        $sql = "SELECT $columns FROM $table $condition";
-        return $this->executeQuery($sql)->fetch_all(MYSQLI_ASSOC);
+        $sql = "SELECT $columns FROM $table";
+        if (!empty($condition)) {
+            $sql .= " $condition";
+        }
+        
+        if (!empty($params)) {
+            $stmt = $this->conn->prepare($sql);
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+        }
     }
 
     public function insert($table, $data)
@@ -81,9 +97,15 @@ class Database
 
     public function authenticate($username, $password, $table)
     {
-        $username = $this->validate($username);
-        $condition = "WHERE username = '" . $username . "' AND password = '" . $this->hashPassword($password) . "'";
-        return $this->select($table, "*", $condition);
+        $password_hash = $this->hashPassword($password);
+        
+        $sql = "SELECT * FROM $table WHERE username = ? AND password = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $username, $password_hash);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function registerUser($name, $number, $email, $username, $password, $role)
