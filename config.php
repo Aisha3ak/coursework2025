@@ -2,8 +2,8 @@
 // Retrieve configuration from environment variables if available, otherwise use defaults
 $db_host = getenv('DB_HOST') ?: '127.0.0.1';
 $db_user = getenv('DB_USER') ?: 'root'; // Should be changed to a dedicated database user in production
-$db_pass = getenv('DB_PASS') ?: 'ismb4754'; // Should be a strong, unique password in production
-$db_name = getenv('DB_NAME') ?: 'ssdcoursework';
+$db_pass = getenv('DB_PASS') ?: 'lab123'; // Should be a strong, unique password in production
+$db_name = getenv('DB_NAME') ?: 'coursework';
 
 // Establish connection with error handling
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
