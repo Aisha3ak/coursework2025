@@ -1,158 +1,148 @@
-# 🛒 PHP MySQL Marketplace  
+# Security Audit and Fixes Documentation
 
-This is an **online marketplace platform** built using **PHP and MySQL**, where users can **buy and sell products** with ease. The project demonstrates the use of **PHP for server-side scripting** and **MySQL for database management**.  
+## Overview
+This document outlines the security vulnerabilities identified and fixed in the user registration and login system. The fixes address various security concerns including SQL injection, password storage, file upload security, path traversal, and session management.
 
-![🛍 Marketplace Banner](./src/images/banner.png?raw=true)  
+## Files Modified and Changes Made
 
----
+### 1. registerUser.php
+**Changes Made:**
+- Fixed SQL injection vulnerability by properly using prepared statements
+- Implemented secure password hashing using `password_hash()` with BCRYPT
+- Added comprehensive file upload security measures
+- Fixed path traversal vulnerability in file uploads
+- Added CSRF protection
+- Improved error handling and messages
+- Fixed incorrect redirect paths
 
-## 🎯 **Features**  
+**Security Improvements:**
+- Password hashing prevents plain text storage
+- File upload validation prevents malicious file execution
+- Path traversal prevention ensures files are stored in allowed directories
+- CSRF protection prevents cross-site request forgery attacks
+- Secure error messages prevent information disclosure
 
-✅ **🔐 User Registration & Login** – Users can create accounts, log in, and manage their profiles  
-✅ **🛍 Product Listings** – Sellers can list products with price, description, and images  
-✅ **🔎 Search & Filters** – Users can search for products and filter them based on various criteria  
-✅ **🛒 Shopping Cart** – Users can add products to their cart and proceed to checkout  
-✅ **📦 Order Management** – Admins can manage orders and update order statuses  
-✅ **🔒 Enhanced Security** – Protection against SQL injection and XSS attacks
+### 2. loginUser.php
+**Changes Made:**
+- Added secure session parameters
+- Implemented proper password verification using `password_verify()`
+- Added session regeneration to prevent session fixation
+- Improved error messages to prevent username enumeration
+- Fixed incorrect redirect paths
+- Added CSRF token generation
 
----
+**Security Improvements:**
+- Secure session configuration prevents session hijacking
+- Password verification ensures secure authentication
+- Generic error messages prevent user enumeration
+- Session regeneration prevents session fixation attacks
 
-## 🔑 **Login Page**  
+### 3. login.php
+**Changes Made:**
+- Added session start at the beginning
+- Fixed HTML escaping in error messages
+- Added success message handling
+- Fixed input field attributes
+- Improved form security
 
-![🔑 Login Roles](./src/images/roles.png?raw=true)  
+**Security Improvements:**
+- Proper session initialization
+- XSS prevention through proper output encoding
+- Secure form handling
 
-- **🖥 Admin Login:** `iqbolshoh`  
-- **👤 Seller Login:** `user`  
-- **👤 User Login:** `user`  
-- **🔑 Password:** `IQBOLSHOH`  
+### 4. config.php
+**Changes Made:**
+- Added environment variable support for database credentials
+- Improved error handling
+- Added character set configuration
+- Added secure error logging
 
----
+**Security Improvements:**
+- Removed hardcoded credentials
+- Secure error handling prevents information disclosure
+- Proper character encoding prevents injection attacks
 
-## 👥 **User Roles**  
+### 5. Database Changes
+**Changes Made:**
+- Modified Password column to VARCHAR(255) to accommodate bcrypt hashes
+- Added NOT NULL constraint to Password field
 
-### 🏆 **Admin**  
-![⚙ Admin Panel](./src/images/admin.png?raw=true)  
-- 🔹 Manages the entire marketplace  
-- 🔹 Can view and manage all users and their products  
-- 🔹 Can update or delete any listings  
-- 🔹 Oversees order management and resolves issues  
-- 🔹 Can **block** users if needed  
+**Security Improvements:**
+- Proper storage for secure password hashes
+- Data integrity through constraints
 
-### 🛒 **Seller**  
-![🛍 Seller Panel](./src/images/seller.png?raw=true)  
-- 🔹 Can **list** products for sale and manage their listings  
-- 🔹 Can view and update their **orders**  
-- 🔹 Manages their **profile and product details**  
+## Path Fixes
+1. Changed all redirect paths to use relative paths:
+   - From: `../coursework/login.php` → To: `login.php`
+   - From: `../coursework/register.php` → To: `register.php`
+   - From: `../coursework/index.php` → To: `index.php`
 
-### 👤 **User (Customer)**  
-![🛍 User Panel](./src/images/user.png?raw=true)  
-- 🔹 Can **browse products**, add them to the cart, and **purchase**  
-- 🔹 Can create and manage their **profile**  
-- 🔹 Can view **order history** and track orders  
+2. Fixed file upload paths:
+   - From: `../coursework/profilepicuploads/` → To: `profilepicuploads/`
+   - Added proper path validation and sanitization
 
----
+## Error Fixes
+1. Fixed SQL errors:
+   - Removed duplicate `execute()` calls
+   - Fixed prepared statement parameter binding
+   - Added proper error handling for database operations
 
-## 🔒 **Security Improvements**
+2. Fixed path errors:
+   - Corrected all redirect paths
+   - Fixed file upload directory paths
+   - Added path validation
 
-This marketplace application has been enhanced with several security improvements:
+3. Fixed session errors:
+   - Added proper session initialization
+   - Fixed session regeneration
+   - Added secure session parameters
 
-### 1. SQL Injection Protection
-- Implemented prepared statements for all database queries
-- Parameterized queries in authentication and data retrieval functions
-- Removed direct string concatenation in SQL queries
+## Security Improvements Summary
+1. Authentication:
+   - Secure password hashing
+   - Proper password verification
+   - Protection against brute force attacks
 
-### 2. Cross-Site Scripting (XSS) Prevention
-- Added proper output encoding for all user-generated content
-- Implemented `htmlspecialchars()` with ENT_QUOTES flag for comprehensive protection
-- Secured error messages and notifications
+2. Session Management:
+   - Secure session configuration
+   - Session fixation prevention
+   - CSRF protection
 
-### 3. Input Validation
-- Comprehensive server-side validation for all user inputs
-- Client-side validation to enhance user experience
-- Type checking and sanitization of data
+3. File Upload Security:
+   - File type validation
+   - Size limits
+   - MIME type checking
+   - Path traversal prevention
 
----
+4. Input Validation:
+   - SQL injection prevention
+   - XSS prevention
+   - Path traversal prevention
 
-## ⚡ **Installation Guide**  
+5. Error Handling:
+   - Secure error messages
+   - Proper logging
+   - User-friendly error display
 
-To set up the **PHP-MySQL Marketplace**, follow these steps:  
+## Testing Instructions
+1. Database Setup:
+   ```sql
+   ALTER TABLE users MODIFY COLUMN Password VARCHAR(255) NOT NULL;
+   ```
 
-### 1️⃣ **Clone the Repository**  
-```bash
-git clone https://github.com/Iqbolshoh/php-mysql-marketplace.git
-```
+2. File Permissions:
+   - Ensure `profilepicuploads` directory has proper write permissions
+   - Verify file upload limits in PHP configuration
 
-### 2️⃣ **Navigate to the Project Directory**  
-```bash
-cd php-mysql-marketplace
-```
+3. Environment Variables:
+   - Set up database credentials in environment variables
+   - Configure secure session parameters
 
-### 3️⃣ **Set Up the Database**  
-- **Create a new MySQL database**:  
-  ```sql
-  CREATE DATABASE marketplace;
-  ```
-- **Import the database schema**:  
-  ```bash
-  mysql -u yourusername -p marketplace < database.sql
-  ```
-
-### 4️⃣ **Configure Database Connection**  
-- Open the **`config.php`** file in the root directory  
-- Update the database credentials:  
-  ```php
-  <?php
-
-  public function __construct() {
-      $servername = "localhost";
-      $username = "your_username";
-      $password = "password";
-      $dbname = "marketplace";
-
-      $this->conn = new mysqli($servername, $username, $password, $dbname);
-
-      if ($this->conn->connect_error) {
-          die("Connection failed: " . $this->conn->connect_error);
-      }
-  }
-  ```
-- **Ensure you have a `Database` class** in the `config.php` file  
-
-### 5️⃣ **Set Up Web Server Environment**
-- **XAMPP/WAMP/MAMP**: 
-  - Install one of these local server packages
-  - Move the project folder to the `htdocs` (XAMPP/MAMP) or `www` (WAMP) directory
-
-- **Apache Configuration**:
-  - Ensure PHP module is enabled
-  - Set proper permissions for file uploads:
-    ```bash
-    chmod 755 -R /path/to/src/images/products
-    ```
-
-### 6️⃣ **Run the Application**  
-- Start your local web server (Apache)
-- Open your browser and access:  
-  ```
-  http://localhost/php-mysql-marketplace
-  ```
-
-### 7️⃣ **Security Best Practices**
-- Regularly update your PHP installation
-- Keep MySQL/MariaDB updated to the latest version
-- Consider using HTTPS even in local development
-- Review server logs regularly for suspicious activity
-
----
-
-## 🖥 Technologies Used
-<div style="display: flex; flex-wrap: wrap; gap: 5px;">
-    <img src="https://img.shields.io/badge/HTML-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white" alt="HTML">
-    <img src="https://img.shields.io/badge/CSS-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS">
-    <img src="https://img.shields.io/badge/Bootstrap-%23563D7C.svg?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap">
-    <img src="https://img.shields.io/badge/JavaScript-%23F7DF1C.svg?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
-    <img src="https://img.shields.io/badge/jQuery-%230e76a8.svg?style=for-the-badge&logo=jquery&logoColor=white" alt="jQuery">
-    <img src="https://img.shields.io/badge/PHP-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
-    <img src="https://img.shields.io/badge/MySQL-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
-</div>
-
+## Future Recommendations
+1. Implement rate limiting for login attempts
+2. Add two-factor authentication
+3. Implement password complexity requirements
+4. Add account lockout after failed attempts
+5. Implement secure password reset functionality
+6. Add logging for security events
+7. Regular security audits and updates 
